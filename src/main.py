@@ -74,6 +74,9 @@ class App(World):
         if self.is_running:
             sprite_x = (0 if self.animation_frame == 1 else 16)  # Running frames at x=16 and x=32
             sprite_y = 8*13
+        if self.player_jumping:
+            sprite_x = 16
+            sprite_y = 8*11
             # print(sprite_x, sprite_y)
         
         # Draw player with appropriate sprite and flipping
