@@ -12,3 +12,5 @@ out/
 # Tiled
 *.tiled-project
 *.tiled-session
+
+src/pigframe/
