@@ -1,0 +1,14 @@
+__pycache__/
+*.egg-info/
+build/
+dist/
+venv/
+.venv/
+.env.local
+
+out/
+*.log
+
+# Tiled
+*.tiled-project
+*.tiled-session
