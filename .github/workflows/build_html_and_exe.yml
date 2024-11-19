@@ -25,6 +25,7 @@ jobs:
           pip install pyinstaller
           pip install pigframe
           pip install pyxel
+          sudo apt install libsdl2-ttf-2.0-0
 
       - name: Copy and clean pigframe
         run: |
