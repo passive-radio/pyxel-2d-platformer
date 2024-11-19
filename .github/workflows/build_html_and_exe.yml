@@ -80,11 +80,17 @@ jobs:
         run: |
           pyxel app2exe ./src.pyxapp
 
-      - name: Upload EXE artifact
+      - name: Create ZIP file
+        run: |
+          mkdir windows-version
+          move src.exe windows-version\
+          powershell Compress-Archive -Path windows-version -DestinationPath windows-version.zip
+
+      - name: Upload ZIP artifact
         uses: actions/upload-artifact@v3
         with:
-          name: windows-exe
-          path: src.exe
+          name: windows-version
+          path: windows-version.zip
 
   create-release:
     needs: [build-html, build-exe]
@@ -99,7 +105,7 @@ jobs:
         with:
           files: |
             html-version/src.html
-            windows-exe/src.exe
+            windows-version/windows-version.zip
           tag_name: v${{ github.run_number }}
           name: Release ${{ github.run_number }}
           draft: false
