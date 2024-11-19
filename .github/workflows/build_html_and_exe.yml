@@ -36,7 +36,7 @@ jobs:
 
       - name: Build pyxapp
         run: |
-          pyxel src src/main.py
+          pyxel packagesrc src/main.py
 
       - name: Build HTML version
         run: |
