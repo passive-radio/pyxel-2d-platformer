@@ -44,6 +44,10 @@ jobs:
 
       - name: Build Windows EXE
         run: |
+          mkdir -p build_temp
+          mv src.pyxapp build_temp/
+          rm -rf src/  # Clean up src directory
+          mv build_temp/src.pyxapp ./
           pyxel app2exe ./src.pyxapp
 
       - name: Upload HTML artifact
