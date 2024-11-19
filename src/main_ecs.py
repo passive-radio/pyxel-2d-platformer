@@ -14,10 +14,11 @@ class Game(World):
     def __init__(self):
         super().__init__()
         self.screen_size = SCREEN_SIZE
+        self.fps = FPS
         self.init()
         
     def init(self):
-        pyxel.init(self.screen_size[0], self.screen_size[1], title=title, fps=FPS)
+        pyxel.init(self.screen_size[0], self.screen_size[1], title=title, fps=self.fps)
         pyxel.images[0] = pyxel.Image.from_image(image_filepath, incl_colors=True)
         for i in range(6):
             pyxel.tilemaps[i] = pyxel.Tilemap.from_tmx(tilemap_filepath, i)
@@ -45,23 +46,31 @@ if __name__ == "__main__":
     spawn_player(game, 8*10, 8*10, 16, 16, jump_power=3.6, move_speed=2.0)
     spawn_background(game, 0)
     spawn_background(game, 2)
-    spawn_floor(game, 4, 2)
-    spawn_floor(game, 3, 8)
-    spawn_floor(game, 1, 8)
-    spawn_floor(game, 5, 8)
+    spawn_collidable_tilemap(game, 4, 2)
+    spawn_collidable_tilemap(game, 3, 8)
+    # spawn_collidable_tilemap(game, 1, 8)
+    spawn_goal_marker_tilemap(game, 1)
+    spawn_collidable_tilemap(game, 5, 8)
+    spawn_stage_state(game, 0, 60.0)
     # spawn_floor(game, 0, 8)
     # spawn_background(game, 3)
     
     # Add systems with adjusted parameters
-    game.add_system_to_scenes(SysFloorCollision, "playable", 1)
+    game.add_system_to_scenes(SysTilemapCollision, "playable", 1)
     game.add_system_to_scenes(SysSimulateGravity, "playable", 5, gravity=0.2, max_fall_speed=2.0)
     game.add_system_to_scenes(SysPlayerMovement, "playable", 2)
     game.add_system_to_scenes(SysPlayerControl, "playable", 3, acceleration=0.5, friction=0.85)
     game.add_system_to_scenes(SysPlayerAnimation, "playable", 6, animation_speed=6)
     game.add_system_to_scenes(SysUpdatePosition, "playable", 4)
+    game.add_system_to_scenes(SysRestartStage, "playable", 100)
+    game.add_system_to_scenes(SysPlayerGoal, "playable", 200)
+    game.add_system_to_scenes(SysUpdateStageState, "playable", 300)
     
     # Add screens
     game.add_screen_to_scenes(ScTileMaps, "playable", 0)
     game.add_screen_to_scenes(ScPlayer, "playable", 100)
+    game.add_screen_to_scenes(ScStageClock, "playable", 1000)
+    game.add_screen_to_scenes(ScGameOver, "playable", 2000)
+    game.add_screen_to_scenes(ScGoal, "playable", 3000)
     
     game.run()

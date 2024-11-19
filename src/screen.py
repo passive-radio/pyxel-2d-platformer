@@ -31,3 +31,30 @@ class ScPlayer(Screen):
                 body.height,  # height
                 0  # colorkey
             )
+
+class ScStageClock(Screen):
+    def __init__(self, world, priority: int = 0) -> None:
+        super().__init__(world, priority)
+    
+    def draw(self):
+        stage_state_entity, stage_state = self.world.get_component(StageState)[0]
+        pyxel.text(2, 2, f"TIME: {stage_state.time_remaining:.1f}", 4)
+
+class ScGameOver(Screen):
+    def __init__(self, world, priority: int = 0) -> None:
+        super().__init__(world, priority)
+    
+    def draw(self):
+        stage_state_entity, stage_state = self.world.get_component(StageState)[0]
+        if stage_state.game_over:
+            pyxel.text(pyxel.width//2, pyxel.height//2, "GAME OVER", 4)
+
+class ScGoal(Screen):
+    def __init__(self, world, priority: int = 0) -> None:
+        super().__init__(world, priority)
+    
+    def draw(self):
+        stage_state_entity, stage_state = self.world.get_component(StageState)[0]
+        if stage_state.is_goal:
+            pyxel.text(pyxel.width//2, pyxel.height//2, "GOAL!", 4)
+

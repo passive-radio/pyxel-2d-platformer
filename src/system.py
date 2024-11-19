@@ -25,8 +25,8 @@ def check_collision(pos: Position2D, body: RectRigidBody, tilemap_id: int, surfa
             # Get tile boundaries in pixel coordinates
             tile_left = xi * 8
             tile_right = tile_left + 8
-            tile_top = yi * 8 + 6
-            tile_bottom = tile_top + 2
+            tile_top = yi * 8 + (8 - surface_height)
+            tile_bottom = tile_top + surface_height
             
             # プレイヤーの実際の判定範囲（surface heightを考慮）
             player_bottom = pos.y + body.height
@@ -56,34 +56,34 @@ class SysSimulateGravity(System):
             # Limit maximum falling speed
             velocity.y = min(velocity.y, self.max_fall_speed)
 
-class SysFloorCollision(System):
+class SysTilemapCollision(System):
     def __init__(self, world, priority: int = 0, **kwargs) -> None:
         super().__init__(world, priority, **kwargs)
 
     def process(self):
         # Assumes there is only one floor entity
-        floor_entity, floor_collidable = self.world.get_component(TileCollidable)[0]
-        floor_tilemap = self.world.get_entity_object(floor_entity)[TileMap]
         
-        # Update collision info of RigidBody objects (RectRigidBody)
         for entity, (_, body, position, collision_info) in self.world.get_components(BaseCollidable, RectRigidBody, Position2D, CollisionInfo):
-            collisions = check_collision(position, body, floor_tilemap.id, floor_collidable.surface_height)
-            if collisions["bottom"]:
-                collision_info.bottom = True
-            else:
-                collision_info.bottom = False
-            if collisions["top"]:
-                collision_info.top = True
-            else:
-                collision_info.top = False
-            if collisions["left"]:
-                collision_info.left = True
-            else:
-                collision_info.left = False
-            if collisions["right"]:
-                collision_info.right = True
-            else:
-                collision_info.right = False
+            bottom = False
+            top = False
+            left = False
+            right = False
+            for entity, (tile_collidable, tilemap) in self.world.get_components(TileCollidable, TileMap): 
+                # Update collision info of RigidBody objects (RectRigidBody)
+                collisions = check_collision(position, body, tilemap.id, tile_collidable.surface_height)
+                if collisions["bottom"]:
+                    bottom = True
+                if collisions["top"]:
+                    top = True
+                if collisions["left"]:
+                    left = True
+                if collisions["right"]:
+                    right = True
+            
+            collision_info.bottom = bottom
+            collision_info.top = top
+            collision_info.left = left
+            collision_info.right = right
 
 class SysPlayerMovement(System):
     def __init__(self, world, priority: int = 0, **kwargs) -> None:
@@ -186,3 +186,41 @@ class SysPlayerAnimation(System):
             animation.sprite_x = sprite_x
             animation.sprite_y = sprite_y
 
+class SysRestartStage(System):
+    def __init__(self, world, priority: int = 0, **kwargs) -> None:
+        super().__init__(world, priority, **kwargs)
+
+    def process(self):
+        if self.world.actions.restart:
+            player_entity, (_, position, velocity) = self.world.get_components(Player, Position2D, Velocity2D)[0]
+            stage_state_entity, stage_state = self.world.get_component(StageState)[0]
+            stage_state.time_remaining = 60.0
+            stage_state.game_over = False
+            stage_state.is_goal = False
+            position.x = 8*10
+            position.y = 8*10
+            velocity.x = 0
+            velocity.y = 0
+
+class SysPlayerGoal(System):
+    def __init__(self, world, priority: int = 0, **kwargs) -> None:
+        super().__init__(world, priority, **kwargs)
+
+    def process(self):
+        goal_marker_entity, goal_marker_tilemap = self.world.get_component(GoalMarkerTileMap)[0]
+        player_entity, (_, position, body) = self.world.get_components(Player, Position2D, RectRigidBody)[0]
+        collisions = check_collision(position, body, goal_marker_tilemap.id, goal_marker_tilemap.pixel_size)
+        stage_state_entity, stage_state = self.world.get_component(StageState)[0]
+        if collisions["bottom"] or collisions["left"]:
+            stage_state.is_goal = True
+
+class SysUpdateStageState(System):
+    def __init__(self, world, priority: int = 0, **kwargs) -> None:
+        super().__init__(world, priority, **kwargs)
+
+    def process(self):
+        for entity, stage_state in self.world.get_component(StageState):
+            if not stage_state.game_over and not stage_state.is_goal:
+                stage_state.time_remaining -= 1 / 60
+                if stage_state.time_remaining <= 0:
+                    stage_state.game_over = True

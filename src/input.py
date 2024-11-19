@@ -13,3 +13,4 @@ class Input(ActionMap):
     # down: tuple = pyxel.btn, pyxel.KEY_DOWN, pyxel.KEY_S
     crouch: tuple = pyxel.btn, pyxel.KEY_DOWN, pyxel.KEY_S
     menu: tuple = pyxel.btnp, pyxel.KEY_ESCAPE
+    restart: tuple = pyxel.btnp, pyxel.KEY_RETURN

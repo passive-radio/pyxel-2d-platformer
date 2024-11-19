@@ -162,6 +162,20 @@ class Animation:
     sprite_x: int = 0
     sprite_y: int = 8*11  # Default idle position
 
+@dataclass
+class GoalMarkerTileMap:
+    """ゴールマーカーを表すオブジェクト"""
+    id: int
+    pixel_size: int = 8
+    
+@dataclass
+class StageState:
+    """ステージの状態を表すオブジェクト"""
+    is_goal: bool = False
+    game_over: bool = False
+    id: int = 0
+    time_remaining: float = 60.0
+
 if __name__ == "__main__":
     v1 = Velocity2D(3, 4)
     v2 = Velocity2D(6, 8)

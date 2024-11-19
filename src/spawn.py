@@ -14,7 +14,7 @@ def spawn_player(world: World, x: int, y: int, width: int, height: int, jump_pow
     world.add_component_to_entity(entity, Animation)
     return entity
 
-def spawn_floor(world: World, tilemap_id: int, surface_height: int):
+def spawn_collidable_tilemap(world: World, tilemap_id: int, surface_height: int):
     entity = world.create_entity()
     world.add_component_to_entity(entity, TileCollidable, surface_height=surface_height)
     world.add_component_to_entity(entity, TileMap, id=tilemap_id)
@@ -23,5 +23,17 @@ def spawn_floor(world: World, tilemap_id: int, surface_height: int):
 def spawn_background(world: World, tilemap_id: int):
     entity = world.create_entity()
     world.add_component_to_entity(entity, TileMap, id=tilemap_id)
+    return entity
+
+def spawn_goal_marker_tilemap(world: World, tilemap_id: int):
+    entity = world.create_entity()
+    world.add_component_to_entity(entity, GoalMarkerTileMap, id=tilemap_id)
+    world.add_component_to_entity(entity, TileCollidable, surface_height=0)
+    world.add_component_to_entity(entity, TileMap, id=tilemap_id)
+    return entity
+
+def spawn_stage_state(world: World, id: int, time_remaining: float):
+    entity = world.create_entity()
+    world.add_component_to_entity(entity, StageState, id=id, time_remaining=time_remaining)
     return entity
 
