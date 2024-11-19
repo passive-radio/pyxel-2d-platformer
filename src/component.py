@@ -17,6 +17,7 @@ class RectRigidBody:
     """長方形で衝突判定を行うオブジェクト"""
     width: int
     height: int
+    flip_x: bool = False
 
 @dataclass
 class CollisionInfo:
@@ -148,6 +149,18 @@ class TileMap:
 class Player:
     """プレイヤーを表すオブジェクト"""
     pass
+
+@dataclass
+class Animation:
+    """アニメーション情報を持つオブジェクト"""
+    frame: int = 0
+    timer: int = 0
+    is_running: bool = False
+    is_jumping: bool = False
+    is_falling: bool = False
+    is_crouching: bool = False
+    sprite_x: int = 0
+    sprite_y: int = 8*11  # Default idle position
 
 if __name__ == "__main__":
     v1 = Velocity2D(3, 4)

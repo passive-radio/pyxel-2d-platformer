@@ -47,11 +47,14 @@ def check_collision(pos: Position2D, body: RectRigidBody, tilemap_id: int, surfa
 class SysSimulateGravity(System):
     def __init__(self, world, priority: int = 0, **kwargs) -> None:
         super().__init__(world, priority, **kwargs)
-        self.gravity = kwargs.get("gravity", 0.1)
+        self.gravity = kwargs.get("gravity", 0.2)
+        self.max_fall_speed = kwargs.get("max_fall_speed", 4.0)
     
     def process(self):
         for entity, (_, velocity) in self.world.get_components(BaseCollidable, Velocity2D):
             velocity.y += self.gravity
+            # Limit maximum falling speed
+            velocity.y = min(velocity.y, self.max_fall_speed)
 
 class SysFloorCollision(System):
     def __init__(self, world, priority: int = 0, **kwargs) -> None:
@@ -99,10 +102,10 @@ class SysPlayerMovement(System):
                 position.next_y = position.y + velocity.y
             
             # Handle horizontal movement
-            if collision_info.left:
+            if collision_info.left and velocity.x < 0:
                 velocity.x = 0
                 position.next_x = position.x
-            elif collision_info.right:
+            elif collision_info.right and velocity.x > 0:
                 velocity.x = 0
                 position.next_x = position.x
             else:
@@ -120,19 +123,66 @@ class SysUpdatePosition(System):
 class SysPlayerControl(System):
     def __init__(self, world, priority: int = 0, **kwargs) -> None:
         super().__init__(world, priority, **kwargs)
+        self.acceleration = kwargs.get("acceleration", 0.5)
+        self.friction = kwargs.get("friction", 0.7)
     
     def process(self):
-        for entity, (_, movable, velocity, collision_info) in self.world.get_components(Player, Movable, Velocity2D, CollisionInfo):
+        for entity, (_, movable, body, velocity, collision_info) in self.world.get_components(Player, Movable, RectRigidBody, Velocity2D, CollisionInfo):
             # Only allow jumping when on the ground
-            print("jump", self.world.actions.jump)
             if self.world.actions.jump and collision_info.bottom:
-                print("player jump")
                 velocity.y = -movable.jump_power
             
-            # Horizontal movement
+            # Horizontal movement with acceleration
             if self.world.actions.left:
-                velocity.x = -movable.speed
+                velocity.x -= self.acceleration
+                velocity.x = max(velocity.x, -movable.speed)
+                body.flip_x = True
             elif self.world.actions.right:
-                velocity.x = movable.speed
+                velocity.x += self.acceleration
+                velocity.x = min(velocity.x, movable.speed)
+                body.flip_x = False
             else:
-                velocity.x = 0
+                # Apply friction when no movement keys are pressed
+                velocity.x *= self.friction
+                # Stop completely if velocity is very small
+                if abs(velocity.x) < 0.1:
+                    velocity.x = 0
+
+class SysPlayerAnimation(System):
+    def __init__(self, world, priority: int = 0, **kwargs) -> None:
+        super().__init__(world, priority, **kwargs)
+        self.animation_speed = kwargs.get("animation_speed", 6)
+    
+    def process(self):
+        for entity, (_, velocity, body, animation) in self.world.get_components(Player, Velocity2D, RectRigidBody, Animation):
+            # Update running state
+            animation.is_running = abs(velocity.x) > 0.1
+            animation.is_jumping = velocity.y < -0.5
+            animation.is_crouching = self.world.actions.crouch
+            # animation.is_falling = velocity.y > 0.5
+            
+            sprite_x = 0
+            sprite_y = 8*11
+            if animation.is_running:
+                animation.timer += 1
+                if animation.timer > self.animation_speed:
+                    animation.timer = 0
+                    animation.frame = (animation.frame + 1) % 2
+                sprite_x = 16 if animation.frame == 1 else 0
+                sprite_y = 8*13
+            
+            if animation.is_jumping:
+                sprite_x = 16
+                sprite_y = 8*11
+                
+            if animation.is_crouching:
+                sprite_x = 48
+                sprite_y = 8*11
+            
+            # if animation.is_falling:
+            #     sprite_x = 32
+            #     sprite_y = 8*11
+            
+            animation.sprite_x = sprite_x
+            animation.sprite_y = sprite_y
+

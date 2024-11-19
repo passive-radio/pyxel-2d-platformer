@@ -7,24 +7,27 @@ class ScTileMaps(Screen):
         super().__init__(world, priority, **kwargs)
     
     def draw(self):
+        player_ent, (_, player_pos) = self.world.get_components(Player, Position2D)[0]
+        camera_x = player_pos.x - pyxel.width // 2
+        camera_y = 0
+
         for entity, tilemap in self.world.get_component(TileMap):
-            pyxel.bltm(0, 0, tilemap.id, 0, 0, pyxel.width, pyxel.height, 0)
+            pyxel.bltm(0, 0, tilemap.id, camera_x, camera_y, pyxel.width, pyxel.height, 0)
 
 class ScPlayer(Screen):
-    def __init__(self, world, priority: int = 0, **kwargs) -> None:
-        super().__init__(world, priority, **kwargs)
+    def __init__(self, world, priority: int = 0) -> None:
+        super().__init__(world, priority)
     
     def draw(self):
-        sprite_x = 0  # Base sprite x position in tileset
-        sprite_y = 8*11
-        for entity, (player, body, pos, vel) in self.world.get_components(Player, RectRigidBody, Position2D, Velocity2D):
+        for entity, (_, position, body, animation) in self.world.get_components(Player, Position2D, RectRigidBody, Animation):
+            # Draw player with animation
             pyxel.blt(
-            pos.x,
-            pos.y,
-            0,  # image bank
-            sprite_x,  # sprite x in tileset
-            sprite_y,  # sprite y in tileset
-            -body.width if vel.x < 0 else body.width,  # width (negative for left flip)
-            body.height,  # height
-            0  # colorkey
-        )
+                pyxel.width//2,
+                position.y,
+                0,  # image bank
+                animation.sprite_x,  # sprite x in tileset
+                animation.sprite_y,  # sprite y in tileset
+                -body.width if body.flip_x else body.width,  # width (negative for left flip)
+                body.height,  # height
+                0  # colorkey
+            )

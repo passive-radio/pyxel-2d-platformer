@@ -9,6 +9,7 @@ class Input(ActionMap):
     jump: tuple = pyxel.btnp, pyxel.KEY_SPACE
     left: tuple = pyxel.btn, pyxel.KEY_LEFT, pyxel.KEY_A
     right: tuple = pyxel.btn, pyxel.KEY_RIGHT, pyxel.KEY_D
-    up: tuple = pyxel.btn, pyxel.KEY_UP, pyxel.KEY_W
-    down: tuple = pyxel.btn, pyxel.KEY_DOWN, pyxel.KEY_S
+    # up: tuple = pyxel.btn, pyxel.KEY_UP, pyxel.KEY_W
+    # down: tuple = pyxel.btn, pyxel.KEY_DOWN, pyxel.KEY_S
+    crouch: tuple = pyxel.btn, pyxel.KEY_DOWN, pyxel.KEY_S
     menu: tuple = pyxel.btnp, pyxel.KEY_ESCAPE

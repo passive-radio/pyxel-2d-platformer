@@ -19,10 +19,11 @@ class Game(World):
     def init(self):
         pyxel.init(self.screen_size[0], self.screen_size[1], title=title, fps=FPS)
         pyxel.images[0] = pyxel.Image.from_image(image_filepath, incl_colors=True)
-        for i in range(0,4,1):
+        for i in range(6):
             pyxel.tilemaps[i] = pyxel.Tilemap.from_tmx(tilemap_filepath, i)
         
     def draw(self):
+        pyxel.cls(0)
         self.process_screens()
         
     def process(self):
@@ -40,18 +41,23 @@ if __name__ == "__main__":
     game.set_user_actions_map(Input())
     game.current_scene = "playable"
     
-    # Spawn entities
-    spawn_player(game, 8*10, 8*10, 16, 16, jump_power=2, move_speed=1.5)
+    # Spawn entities with adjusted parameters
+    spawn_player(game, 8*10, 8*10, 16, 16, jump_power=3.6, move_speed=2.0)
     spawn_background(game, 0)
-    spawn_background(game, 1)
-    spawn_floor(game, 2, 2)
-    spawn_background(game, 3)
+    spawn_background(game, 2)
+    spawn_floor(game, 4, 2)
+    spawn_floor(game, 3, 8)
+    spawn_floor(game, 1, 8)
+    spawn_floor(game, 5, 8)
+    # spawn_floor(game, 0, 8)
+    # spawn_background(game, 3)
     
-    # Add systems
-    game.add_system_to_scenes(SysFloorCollision, "playable", 0)
-    game.add_system_to_scenes(SysSimulateGravity, "playable", 1)
+    # Add systems with adjusted parameters
+    game.add_system_to_scenes(SysFloorCollision, "playable", 1)
+    game.add_system_to_scenes(SysSimulateGravity, "playable", 5, gravity=0.2, max_fall_speed=2.0)
     game.add_system_to_scenes(SysPlayerMovement, "playable", 2)
-    game.add_system_to_scenes(SysPlayerControl, "playable", 3)
+    game.add_system_to_scenes(SysPlayerControl, "playable", 3, acceleration=0.5, friction=0.85)
+    game.add_system_to_scenes(SysPlayerAnimation, "playable", 6, animation_speed=6)
     game.add_system_to_scenes(SysUpdatePosition, "playable", 4)
     
     # Add screens

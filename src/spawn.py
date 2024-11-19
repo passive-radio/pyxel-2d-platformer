@@ -11,6 +11,7 @@ def spawn_player(world: World, x: int, y: int, width: int, height: int, jump_pow
     world.add_component_to_entity(entity, CollisionInfo)
     world.add_component_to_entity(entity, Player)
     world.add_component_to_entity(entity, Movable, speed=move_speed, jump_power=jump_power)
+    world.add_component_to_entity(entity, Animation)
     return entity
 
 def spawn_floor(world: World, tilemap_id: int, surface_height: int):
