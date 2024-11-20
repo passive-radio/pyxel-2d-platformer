@@ -39,7 +39,7 @@ class ScStageClock(Screen):
     
     def draw(self):
         stage_state_entity, stage_state = self.world.get_component(StageState)[0]
-        pyxel.text(2, 2, f"TIME: {stage_state.time_remaining:.1f}", 4)
+        pyxel.text(2, 2, f"TIME: {stage_state.time_remaining:.1f}", 1)
 
 class ScGameOver(Screen):
     def __init__(self, world, priority: int = 0) -> None:
@@ -48,7 +48,7 @@ class ScGameOver(Screen):
     def draw(self):
         stage_state_entity, stage_state = self.world.get_component(StageState)[0]
         if stage_state.game_over:
-            pyxel.text(pyxel.width//2, pyxel.height//2, "GAME OVER", 4)
+            pyxel.text(pyxel.width//2, pyxel.height//2, "GAME OVER", 1)
 
 class ScGoal(Screen):
     def __init__(self, world, priority: int = 0) -> None:
@@ -57,7 +57,7 @@ class ScGoal(Screen):
     def draw(self):
         stage_state_entity, stage_state = self.world.get_component(StageState)[0]
         if stage_state.is_goal:
-            pyxel.text(pyxel.width//2, pyxel.height//2, "GOAL!", 4)
+            pyxel.text(pyxel.width//2, pyxel.height//2, "GOAL!", 1)
 
 class ScEnemy(Screen):
     def __init__(self, world, priority: int = 0) -> None:
@@ -81,6 +81,18 @@ class ScEnemy(Screen):
                 body.height,  # height
                 0  # colorkey
             )
+            
+class ScDebugColorPalette(Screen):
+    def __init__(self, world, priority: int = 0) -> None:
+        super().__init__(world, priority)
+    
+    def draw(self):
+        base_x = 120
+        base_y = 2
+        for x in range(8):
+            for y in range(3):
+                color_id = x + y*8
+                pyxel.rect(base_x + x*8, base_y + y*8, 8, 8, color_id)
 
 class ScDebugPlayer(Screen):
     def __init__(self, world, priority: int = 0) -> None:
@@ -88,7 +100,7 @@ class ScDebugPlayer(Screen):
     
     def draw(self):
         for entity, (_, position) in self.world.get_components(Player, Position2D):
-            pyxel.text(50, 2, f"x: {position.x:.1f}, y: {position.y:.1f}", 7)
+            pyxel.text(50, 2, f"x: {position.x:.1f}, y: {position.y:.1f}", 1)
 
 class ScCoin(Screen):
     def __init__(self, world, priority: int = 0) -> None:

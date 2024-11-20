@@ -15,39 +15,6 @@ COINS_POSITIONS = [
     (8*36, 8*10),
 ]
 
-def get_coin_positions_from_tilemap(tilemap_id: int = 7) -> list[tuple[int, int]]:
-    """Convert coin tilemap to list of coin positions.
-    
-    Args:
-        tilemap_id (int): Tilemap ID for coins (default: 7)
-    
-    Returns:
-        list[tuple[int, int]]: List of coin positions in pixel coordinates [(x, y), ...]
-    """
-    coin_positions = []
-    coins_pixels_width = 2
-    coins_pixels_height = 2
-    
-    # Get tilemap dimensions
-    tilemap = pyxel.tilemaps[tilemap_id]
-    # width, height = tilemap.width, tilemap.height
-    height = 20
-    width = 120
-    
-    # Scan each tile
-    for y in range(0, height, coins_pixels_height):
-        for x in range(0, width, coins_pixels_width):
-            col, colkey = tilemap.pget(x, y)
-            print(col, colkey)
-            if col != 0:  # Non-zero means coin placement
-                # Convert tile coordinates to pixel coordinates
-                pixel_x = x * 8
-                pixel_y = y * 8
-                coin_positions.append((pixel_x, pixel_y))
-    
-    print(coin_positions)
-    return coin_positions
-
 class Game(World):
     def __init__(self):
         super().__init__()
@@ -129,6 +96,7 @@ if __name__ == "__main__":
     
     ## Debug
     game.add_screen_to_scenes(ScDebugPlayer, "playable", 5000)
+    game.add_screen_to_scenes(ScDebugColorPalette, "playable", 5001)
     
     ## Coin
     game.add_screen_to_scenes(ScCoin, "playable", 50)
