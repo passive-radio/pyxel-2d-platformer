@@ -67,7 +67,8 @@ if __name__ == "__main__":
     game.add_system_to_scenes(SysRestartStage, "playable", 100)
     game.add_system_to_scenes(SysPlayerGoal, "playable", 200)
     game.add_system_to_scenes(SysUpdateStageState, "playable", 300)
-
+    game.add_system_to_scenes(SysPlayerDieFromFall, "playable", 400)
+    
     ## Enemy
     game.add_system_to_scenes(SysEnemyWalk, "playable", 100)
     # game.add_system_to_scenes(SysEnemyMovement, "playable", 200)

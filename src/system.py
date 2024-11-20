@@ -274,3 +274,19 @@ class SysEnemyAnimation(System):
             
             animation.sprite_x = sprite_x
             animation.sprite_y = sprite_y
+
+class SysPlayerDieFromFall(System):
+    def __init__(self, world, priority: int = 0, **kwargs) -> None:
+        super().__init__(world, priority, **kwargs)
+
+    def process(self):
+        player_entity, (_, position, body, velocity, collision_info) = self.world.get_components(Player, Position2D, RectRigidBody, Velocity2D, CollisionInfo)[0]
+        if position.y > 8*15:
+            stage_state_entity, stage_state = self.world.get_component(StageState)[0]
+            stage_state.time_remaining = 60.0
+            stage_state.game_over = False
+            stage_state.is_goal = False
+            position.x = 8*10
+            position.y = 8*10
+            velocity.x = 0
+            velocity.y = 0
