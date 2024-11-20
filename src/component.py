@@ -1,5 +1,5 @@
 from pigframe import *
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import math
 
 @dataclass
@@ -182,7 +182,7 @@ class StageState:
     time_remaining: float = 60.0
     coins: int = 0
     lives: int = 3
-
+    init_enemy_positions: list[tuple[int, int]] = field(default_factory=list)
 @dataclass
 class Enemy:
     """敵を表すオブジェクト"""

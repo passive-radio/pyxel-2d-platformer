@@ -1,7 +1,7 @@
 import pyxel
 from component import *
 
-def check_collision(pos: Position2D, body: RectRigidBody, tilemap_id: int, surface_height: int = None):
+def check_collision_tilemap(pos: Position2D, body: RectRigidBody, tilemap_id: int, surface_height: int = None):
     # Convert pixel coordinates to tile coordinates
     tile_x1 = pyxel.floor(pos.x) // 8
     tile_y1 = pyxel.floor(pos.y) // 8
@@ -66,14 +66,12 @@ def get_coin_positions_from_tilemap(tilemap_id: int = 7) -> list[tuple[int, int]
     for y in range(0, height, coins_pixels_height):
         for x in range(0, width, coins_pixels_width):
             col, colkey = tilemap.pget(x, y)
-            print(col, colkey)
             if col != 0:  # Non-zero means coin placement
                 # Convert tile coordinates to pixel coordinates
                 pixel_x = x * 8
                 pixel_y = y * 8
                 coin_positions.append((pixel_x, pixel_y))
     
-    print(coin_positions)
     return coin_positions
 
 def check_intersection_rect(pos1: Position2D, body1: RectRigidBody, pos2: Position2D, body2: RectRigidBody):
@@ -86,3 +84,32 @@ def check_intersection_rect_circle(pos1: Position2D, body1: RectRigidBody, pos2:
     center_y2 = pos2.y + body2.radius
     margin = 1.2
     return (center_x - center_x2)**2 + (center_y - center_y2)**2 <= (body2.radius * margin)**2
+
+def check_collision_rect_rect(pos1: Position2D, body1: RectRigidBody, pos2: Position2D, body2: RectRigidBody):
+    collisions = {
+        "left": False,
+        "right": False,
+        "top": False,
+        "bottom": False
+    }
+    
+    
+    if not check_intersection_rect(pos1, body1, pos2, body2):
+        return collisions
+    
+    if pos2.x <= pos1.x + body1.width <= pos2.x + body2.width:
+        collisions["right"] = True
+    if pos2.x <= pos1.x <= pos2.x + body2.width:
+        collisions["left"] = True
+    if pos2.y <= pos1.y + body1.height <= pos2.y + body2.height:
+        collisions["bottom"] = True
+    if pos2.y <= pos1.y <= pos2.y + body2.height:
+        collisions["top"] = True
+    return collisions
+
+def check_intersection_angle(pos1: Position2D, body1: RectRigidBody, pos2: Position2D, body2: RectRigidBody):
+    center_x1 = pos1.x + body1.width//2
+    center_y1 = pos1.y + body1.height//2
+    center_x2 = pos2.x + body2.width//2
+    center_y2 = pos2.y + body2.height//2
+    return math.atan2(center_y2 - center_y1, center_x2 - center_x1)

@@ -1,12 +1,11 @@
 from pigframe import World
 from component import *
-from system import *
 
 def spawn_player(world: World, x: int, y: int, width: int, height: int, jump_power: int = 2, move_speed: float = 0.15):
     entity = world.create_entity()
     world.add_component_to_entity(entity, BaseCollidable)
     world.add_component_to_entity(entity, RectRigidBody, width=width, height=height)
-    world.add_component_to_entity(entity, Position2D, x=x, y=y)
+    world.add_component_to_entity(entity, Position2D, x=x, y=y, prev_x=x, prev_y=y)
     world.add_component_to_entity(entity, Velocity2D, x=0, y=0)
     world.add_component_to_entity(entity, CollisionInfo)
     world.add_component_to_entity(entity, Player)
@@ -32,17 +31,21 @@ def spawn_goal_marker_tilemap(world: World, tilemap_id: int):
     world.add_component_to_entity(entity, TileMap, id=tilemap_id)
     return entity
 
-def spawn_stage_state(world: World, id: int, time_remaining: float):
+def spawn_stage(world: World, id: int, time_remaining: float, init_enemy_positions: list[tuple[int, int]]):
     entity = world.create_entity()
-    world.add_component_to_entity(entity, StageState, id=id, time_remaining=time_remaining)
-    return entity
+    world.add_component_to_entity(entity, StageState, id=id, time_remaining=time_remaining, init_enemy_positions=init_enemy_positions)
+    
+    enemy_entities = []
+    for pos in init_enemy_positions:
+        enemy_entities.append(spawn_enemy(world, 0, pos[0], pos[1]))
+    return entity, enemy_entities
 
 def spawn_enemy(world: World, species_id: int, x: int, y: int):
     entity = world.create_entity()
     world.add_component_to_entity(entity, Enemy, species_id=species_id)
     world.add_component_to_entity(entity, Movable)
     world.add_component_to_entity(entity, RectRigidBody, width=16, height=16)
-    world.add_component_to_entity(entity, Position2D, x=x, y=y)
+    world.add_component_to_entity(entity, Position2D, x=x, y=y, prev_x=x, prev_y=y)
     world.add_component_to_entity(entity, Velocity2D, x=0, y=0)
     world.add_component_to_entity(entity, MoveMethodWalk)
     world.add_component_to_entity(entity, EnemyState, is_dead=False)

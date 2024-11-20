@@ -1,6 +1,7 @@
 from pigframe import System
 from component import *
 from utils import *
+from stage import reset_stage
 
 class SysSimulateGravity(System):
     def __init__(self, world, priority: int = 0, **kwargs) -> None:
@@ -28,7 +29,7 @@ class SysTilemapCollision(System):
             right = False
             for entity, (tile_collidable, tilemap) in self.world.get_components(TileCollidable, TileMap): 
                 # Update collision info of RigidBody objects (RectRigidBody)
-                collisions = check_collision(position, body, tilemap.id, tile_collidable.surface_height)
+                collisions = check_collision_tilemap(position, body, tilemap.id, tile_collidable.surface_height)
                 if collisions["bottom"]:
                     bottom = True
                 if collisions["top"]:
@@ -37,6 +38,34 @@ class SysTilemapCollision(System):
                     left = True
                 if collisions["right"]:
                     right = True
+            
+            collision_info.bottom = bottom
+            collision_info.top = top
+            collision_info.left = left
+            collision_info.right = right
+
+class SysCharacterCollision(System):
+    def __init__(self, world, priority: int = 0, **kwargs) -> None:
+        super().__init__(world, priority, **kwargs)
+    
+    def process(self):
+        for entity, (_, position, body, collision_info) in self.world.get_components(BaseCollidable, Position2D, RectRigidBody, CollisionInfo):
+            bottom = False
+            top = False
+            left = False
+            right = False
+            for entity2, (_, position2, body2, collision_info2) in self.world.get_components(BaseCollidable, Position2D, RectRigidBody, CollisionInfo):
+                if entity == entity2:
+                    continue
+                collisions = check_collision_rect_rect(position, body, position2, body2)
+                if collisions["left"]:
+                    left = True
+                if collisions["right"]:
+                    right = True
+                if collisions["bottom"]:
+                    bottom = True
+                if collisions["top"]:
+                    top = True
             
             collision_info.bottom = bottom
             collision_info.top = top
@@ -87,6 +116,11 @@ class SysPlayerControl(System):
     def process(self):
         for entity, (_, movable, body, velocity, collision_info) in self.world.get_components(Player, Movable, RectRigidBody, Velocity2D, CollisionInfo):
             # Only allow jumping when on the ground
+            ignore_value = 10000
+            gamepad_input_x = pyxel.btnv(pyxel.GAMEPAD1_AXIS_LEFTX)
+            gamepad_input_y = pyxel.btnv(pyxel.GAMEPAD1_AXIS_LEFTY)
+            print("gamepad input:", gamepad_input_x, gamepad_input_y)
+
             if self.world.actions.jump and collision_info.bottom:
                 velocity.y = -movable.jump_power
             
@@ -99,13 +133,21 @@ class SysPlayerControl(System):
                 velocity.x += self.acceleration
                 velocity.x = min(velocity.x, movable.speed)
                 body.flip_x = False
+            elif gamepad_input_x < -ignore_value:
+                velocity.x -= self.acceleration
+                velocity.x = max(velocity.x, -movable.speed)
+                body.flip_x = True
+            elif gamepad_input_x > ignore_value:
+                velocity.x += self.acceleration
+                velocity.x = min(velocity.x, movable.speed)
+                body.flip_x = False
             else:
                 # Apply friction when no movement keys are pressed
                 velocity.x *= self.friction
                 # Stop completely if velocity is very small
                 if abs(velocity.x) < 0.1:
                     velocity.x = 0
-
+            
 class SysPlayerAnimation(System):
     def __init__(self, world, priority: int = 0, **kwargs) -> None:
         super().__init__(world, priority, **kwargs)
@@ -116,7 +158,9 @@ class SysPlayerAnimation(System):
             # Update running state
             animation.is_running = abs(velocity.x) > 0.1
             animation.is_jumping = velocity.y < -0.5
-            animation.is_crouching = self.world.actions.crouch
+            gamepad_ignore_value = 10000
+            gamepad_input_y = pyxel.btnv(pyxel.GAMEPAD1_AXIS_LEFTY)
+            animation.is_crouching = self.world.actions.crouch or gamepad_input_y > gamepad_ignore_value
             # animation.is_falling = velocity.y > 0.5
             
             sprite_x = 0
@@ -155,10 +199,13 @@ class SysRestartStage(System):
             stage_state.time_remaining = 60.0
             stage_state.game_over = False
             stage_state.is_goal = False
+            stage_state.lives = 3
+            stage_state.coins = 0
             position.x = 8*10
             position.y = 8*10
             velocity.x = 0
             velocity.y = 0
+            reset_stage(self.world, stage_state.init_enemy_positions)
 
 class SysPlayerGoal(System):
     def __init__(self, world, priority: int = 0, **kwargs) -> None:
@@ -167,7 +214,7 @@ class SysPlayerGoal(System):
     def process(self):
         goal_marker_entity, goal_marker_tilemap = self.world.get_component(GoalMarkerTileMap)[0]
         player_entity, (_, position, body) = self.world.get_components(Player, Position2D, RectRigidBody)[0]
-        collisions = check_collision(position, body, goal_marker_tilemap.id, goal_marker_tilemap.pixel_size)
+        collisions = check_collision_tilemap(position, body, goal_marker_tilemap.id, goal_marker_tilemap.pixel_size)
         stage_state_entity, stage_state = self.world.get_component(StageState)[0]
         if collisions["bottom"] or collisions["left"]:
             stage_state.is_goal = True
@@ -249,6 +296,17 @@ class SysPlayerDieFromFall(System):
             velocity.y = 0
             if stage_state.lives > 0:
                 stage_state.lives -= 1
+                reset_stage(self.world, stage_state.init_enemy_positions)
+
+class SysPlayerDieNoHP(System):
+    def __init__(self, world, priority: int = 0, **kwargs) -> None:
+        super().__init__(world, priority, **kwargs)
+    
+    def process(self):
+        player_entity, (_, position, body, velocity, collision_info) = self.world.get_components(Player, Position2D, RectRigidBody, Velocity2D, CollisionInfo)[0]
+        stage_state_entity, stage_state = self.world.get_component(StageState)[0]
+        if stage_state.lives <= 0:
+            stage_state.game_over = True
 
 class SysCollectCoin(System):
     def __init__(self, world, priority: int = 0, **kwargs) -> None:
@@ -264,3 +322,26 @@ class SysCollectCoin(System):
                 coin_state.is_collected = True
                 stage_state.coins += 1
 
+class SysPlayerEnemyCollision(System):
+    def __init__(self, world, priority: int = 0, **kwargs) -> None:
+        super().__init__(world, priority, **kwargs)
+
+    def process(self):
+        player_entity, (_, position, body) = self.world.get_components(Player, Position2D, RectRigidBody)[0]
+        stage_state_entity, stage_state = self.world.get_component(StageState)[0]
+        for entity, (_, velocity, enemy_position, enemy_body) in self.world.get_components(Enemy, Velocity2D, Position2D, RectRigidBody):
+            collisions = check_collision_rect_rect(position, body, enemy_position, enemy_body)
+            intersection_angle = check_intersection_angle(position, body, enemy_position, enemy_body)
+            
+            # if angle is less than 45 degrees, it is a hit from the side
+            if abs(intersection_angle) < math.pi / 4 and (collisions["left"] or collisions["right"]):
+                print("hit enemy")
+                if stage_state.lives > 0:
+                    stage_state.lives -= 1
+                    velocity.x *= -1
+                    enemy_body.flip_x = not enemy_body.flip_x
+                    
+                    break
+            if abs(intersection_angle) > math.pi / 4 and collisions["bottom"]:
+                print("step on enemy")
+                self.world.remove_entity(entity)

@@ -21,7 +21,6 @@ class ScPlayer(Screen):
     def draw(self):
         for entity, (_, position, body, animation) in self.world.get_components(Player, Position2D, RectRigidBody, Animation):
             # Draw player with animation
-            print(pyxel.width//2, position.y)
             pyxel.blt(
                 pyxel.width//2,
                 position.y,
@@ -48,7 +47,9 @@ class ScGameOver(Screen):
     def draw(self):
         stage_state_entity, stage_state = self.world.get_component(StageState)[0]
         if stage_state.game_over:
-            pyxel.text(pyxel.width//2, pyxel.height//2, "GAME OVER", 1)
+            message = "GAME OVER"
+            pos_x = pyxel.width//2 - len(message)
+            pyxel.text(pos_x, pyxel.height//2, message, 1)
 
 class ScGoal(Screen):
     def __init__(self, world, priority: int = 0) -> None:
@@ -57,7 +58,9 @@ class ScGoal(Screen):
     def draw(self):
         stage_state_entity, stage_state = self.world.get_component(StageState)[0]
         if stage_state.is_goal:
-            pyxel.text(pyxel.width//2, pyxel.height//2, "GOAL!", 1)
+            message = "GOAL!"
+            pos_x = pyxel.width//2 - len(message)
+            pyxel.text(pos_x, pyxel.height//2, message, 1)
 
 class ScEnemy(Screen):
     def __init__(self, world, priority: int = 0) -> None:
@@ -111,7 +114,6 @@ class ScCoin(Screen):
         for entity, (_, state, position, body) in self.world.get_components(Coin, CoinState, Position2D, CircleRigidBody):
             if state.is_collected:
                 continue
-            print("coin:",position.x, position.y)
             diff_from_center_x = position.x - player_pos.x
             diff_from_center_y = position.y
             local_x = pyxel.width//2 + diff_from_center_x
