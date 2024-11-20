@@ -81,9 +81,11 @@ if __name__ == "__main__":
     
     ## Enemy
     game.add_system_to_scenes(SysEnemyWalk, "playable", 100)
-    # game.add_system_to_scenes(SysEnemyMovement, "playable", 200)
     game.add_system_to_scenes(SysEnemyAnimation, "playable", 300)
     
+    ## Coin
+    game.add_system_to_scenes(SysCollectCoin, "playable", 400)
+
     # Add screens
     game.add_screen_to_scenes(ScTileMaps, "playable", 0)
     game.add_screen_to_scenes(ScPlayer, "playable", 100)
@@ -100,6 +102,7 @@ if __name__ == "__main__":
     
     ## Coin
     game.add_screen_to_scenes(ScCoin, "playable", 50)
+    game.add_screen_to_scenes(ScCoinCount, "playable", 500)
     
     ## Lives
     game.add_screen_to_scenes(ScLives, "playable", 500)

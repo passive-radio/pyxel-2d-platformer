@@ -21,7 +21,7 @@ class SysTilemapCollision(System):
     def process(self):
         # Assumes there is only one floor entity
         
-        for entity, (_, body, position, collision_info) in self.world.get_components(BaseCollidable, RectRigidBody, Position2D, CollisionInfo):
+        for entity, (_, _, body, position, collision_info) in self.world.get_components(BaseCollidable, Movable,RectRigidBody, Position2D, CollisionInfo):
             bottom = False
             top = False
             left = False
@@ -240,7 +240,7 @@ class SysPlayerDieFromFall(System):
         player_entity, (_, position, body, velocity, collision_info) = self.world.get_components(Player, Position2D, RectRigidBody, Velocity2D, CollisionInfo)[0]
         if position.y > 8*15:
             stage_state_entity, stage_state = self.world.get_component(StageState)[0]
-            stage_state.time_remaining = 60.0
+            # stage_state.time_remaining = 60.0
             stage_state.game_over = False
             stage_state.is_goal = False
             position.x = 8*10
@@ -249,3 +249,18 @@ class SysPlayerDieFromFall(System):
             velocity.y = 0
             if stage_state.lives > 0:
                 stage_state.lives -= 1
+
+class SysCollectCoin(System):
+    def __init__(self, world, priority: int = 0, **kwargs) -> None:
+        super().__init__(world, priority, **kwargs)
+
+    def process(self):
+        player_entity, (_, position, body) = self.world.get_components(Player, Position2D, RectRigidBody)[0]
+        stage_state_entity, stage_state = self.world.get_component(StageState)[0]
+        for entity, (_, _, coin_state, coin_position, coin_body) in self.world.get_components(Coin, Collectible, CoinState, Position2D, CircleRigidBody):
+            if coin_state.is_collected:
+                continue
+            if check_intersection_rect_circle(position, body, coin_position, coin_body):
+                coin_state.is_collected = True
+                stage_state.coins += 1
+

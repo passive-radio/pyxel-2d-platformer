@@ -57,4 +57,5 @@ def spawn_coin(world: World, x: int, y: int):
     world.add_component_to_entity(entity, Coin)
     world.add_component_to_entity(entity, Position2D, x=x, y=y)
     world.add_component_to_entity(entity, CoinState, is_collected=False)
+    world.add_component_to_entity(entity, CircleRigidBody, radius=8)
     return entity

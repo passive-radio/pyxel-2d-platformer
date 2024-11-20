@@ -108,7 +108,7 @@ class ScCoin(Screen):
     
     def draw(self):
         player_ent, (_, player_pos) = self.world.get_components(Player, Position2D)[0]
-        for entity, (_, state, position) in self.world.get_components(Coin, CoinState, Position2D):
+        for entity, (_, state, position, body) in self.world.get_components(Coin, CoinState, Position2D, CircleRigidBody):
             if state.is_collected:
                 continue
             print("coin:",position.x, position.y)
@@ -116,7 +116,7 @@ class ScCoin(Screen):
             diff_from_center_y = position.y
             local_x = pyxel.width//2 + diff_from_center_x
             local_y = diff_from_center_y
-            pyxel.blt(local_x, local_y, 0, 16, 8+16*4, 16, 16, 0)
+            pyxel.blt(local_x, local_y, 0, 16, 8+16*4, body.radius*2, body.radius*2, 0)
             
 class ScLives(Screen):
     def __init__(self, world, priority: int = 0) -> None:
@@ -128,3 +128,16 @@ class ScLives(Screen):
         life_sprite_y = 8*0
         for i in range(stage_state.lives):
             pyxel.blt(2 + i*10, 8, 0, life_sprite_x, life_sprite_y, 8, 8, 0)
+
+class ScCoinCount(Screen):
+    def __init__(self, world, priority: int = 0) -> None:
+        super().__init__(world, priority)
+    
+    def draw(self):
+        stage_state_entity, stage_state = self.world.get_component(StageState)[0]
+        sprite_x = 8*4
+        sprite_y = 8*0
+        base_x = 38
+        pyxel.blt(base_x, 8, 0, sprite_x, sprite_y, 8, 8, 0)
+        pyxel.text(base_x+11, 9, "x", 1)
+        pyxel.text(base_x+16, 9, f"{int(stage_state.coins)}", 1)

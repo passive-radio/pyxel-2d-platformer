@@ -75,3 +75,14 @@ def get_coin_positions_from_tilemap(tilemap_id: int = 7) -> list[tuple[int, int]
     
     print(coin_positions)
     return coin_positions
+
+def check_intersection_rect(pos1: Position2D, body1: RectRigidBody, pos2: Position2D, body2: RectRigidBody):
+    return pos1.x + body1.width > pos2.x and pos1.x < pos2.x + body2.width and pos1.y + body1.height > pos2.y and pos1.y < pos2.y + body2.height
+
+def check_intersection_rect_circle(pos1: Position2D, body1: RectRigidBody, pos2: Position2D, body2: CircleRigidBody):
+    center_x = pos1.x + body1.width//2
+    center_y = pos1.y + body1.height//2
+    center_x2 = pos2.x + body2.radius
+    center_y2 = pos2.y + body2.radius
+    margin = 1.2
+    return (center_x - center_x2)**2 + (center_y - center_y2)**2 <= (body2.radius * margin)**2

@@ -20,6 +20,11 @@ class RectRigidBody:
     flip_x: bool = False
 
 @dataclass
+class CircleRigidBody:
+    """円形で衝突判定を行うオブジェクト"""
+    radius: int
+    flip_x: bool = False
+@dataclass
 class CollisionInfo:
     """衝突情報を持つオブジェクト"""
     left: bool = False
