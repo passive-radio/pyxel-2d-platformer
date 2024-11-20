@@ -90,6 +90,9 @@ if __name__ == "__main__":
     
     ## Player
     game.add_system_to_scenes(SysPlayerDieNoHP, "playable", 500)
+    
+    ## Menu
+    game.add_system_to_scenes(SysExitGame, "playable", 5000)
 
     # Add screens
     game.add_screen_to_scenes(ScTileMaps, "playable", 0)

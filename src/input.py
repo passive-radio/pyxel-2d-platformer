@@ -12,5 +12,5 @@ class Input(ActionMap):
     # up: tuple = pyxel.btn, pyxel.KEY_UP, pyxel.KEY_W
     # down: tuple = pyxel.btn, pyxel.KEY_DOWN, pyxel.KEY_S
     crouch: tuple = pyxel.btn, pyxel.KEY_DOWN, pyxel.KEY_S, pyxel.GAMEPAD1_BUTTON_DPAD_DOWN, pyxel.GAMEPAD2_BUTTON_DPAD_DOWN, pyxel.GAMEPAD3_BUTTON_DPAD_DOWN, pyxel.GAMEPAD4_BUTTON_DPAD_DOWN
-    menu: tuple = pyxel.btnp, pyxel.KEY_ESCAPE, pyxel.GAMEPAD1_BUTTON_START, pyxel.GAMEPAD2_BUTTON_START, pyxel.GAMEPAD3_BUTTON_START, pyxel.GAMEPAD4_BUTTON_START
-    restart: tuple = pyxel.btnp, pyxel.KEY_RETURN, pyxel.GAMEPAD1_BUTTON_B, pyxel.GAMEPAD2_BUTTON_B
+    exit: tuple = pyxel.btnp, pyxel.KEY_ESCAPE, pyxel.GAMEPAD1_BUTTON_BACK, pyxel.GAMEPAD2_BUTTON_BACK, pyxel.GAMEPAD3_BUTTON_BACK, pyxel.GAMEPAD4_BUTTON_BACK
+    restart: tuple = pyxel.btnp, pyxel.KEY_RETURN, pyxel.GAMEPAD1_BUTTON_B, pyxel.GAMEPAD2_BUTTON_B, pyxel.GAMEPAD3_BUTTON_B, pyxel.GAMEPAD4_BUTTON_B

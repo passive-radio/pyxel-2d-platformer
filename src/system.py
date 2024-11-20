@@ -345,3 +345,11 @@ class SysPlayerEnemyCollision(System):
             if abs(intersection_angle) > math.pi / 4 and collisions["bottom"]:
                 print("step on enemy")
                 self.world.remove_entity(entity)
+                
+class SysExitGame(System):
+    def __init__(self, world, priority: int = 0, **kwargs) -> None:
+        super().__init__(world, priority, **kwargs)
+
+    def process(self):
+        if self.world.actions.exit:
+            pyxel.quit()
