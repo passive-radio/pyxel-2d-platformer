@@ -37,3 +37,17 @@ def spawn_stage_state(world: World, id: int, time_remaining: float):
     world.add_component_to_entity(entity, StageState, id=id, time_remaining=time_remaining)
     return entity
 
+def spawn_enemy(world: World, species_id: int, x: int, y: int):
+    entity = world.create_entity()
+    world.add_component_to_entity(entity, Enemy, species_id=species_id)
+    world.add_component_to_entity(entity, RectRigidBody, width=16, height=16)
+    world.add_component_to_entity(entity, Position2D, x=x, y=y)
+    world.add_component_to_entity(entity, Velocity2D, x=0, y=0)
+    world.add_component_to_entity(entity, MoveMethodWalk)
+    world.add_component_to_entity(entity, EnemyState, is_dead=False)
+    world.add_component_to_entity(entity, EnemyAnimation, frame=0, timer=0, is_running=True)
+    world.add_component_to_entity(entity, BaseCollidable)
+    world.add_component_to_entity(entity, CollisionInfo)
+    return entity
+
+

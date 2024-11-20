@@ -21,6 +21,7 @@ class ScPlayer(Screen):
     def draw(self):
         for entity, (_, position, body, animation) in self.world.get_components(Player, Position2D, RectRigidBody, Animation):
             # Draw player with animation
+            print(pyxel.width//2, position.y)
             pyxel.blt(
                 pyxel.width//2,
                 position.y,
@@ -58,3 +59,33 @@ class ScGoal(Screen):
         if stage_state.is_goal:
             pyxel.text(pyxel.width//2, pyxel.height//2, "GOAL!", 4)
 
+class ScEnemy(Screen):
+    def __init__(self, world, priority: int = 0) -> None:
+        super().__init__(world, priority)
+    
+    def draw(self):
+        player_ent, (_, player_pos) = self.world.get_components(Player, Position2D)[0]
+        for entity, (_, position, body, animation) in self.world.get_components(Enemy, Position2D, RectRigidBody, EnemyAnimation):
+            diff_from_center_x = position.x - player_pos.x
+            diff_from_center_y = position.y
+            # player の位置を基準に描画 
+            local_x = pyxel.width//2 + diff_from_center_x
+            local_y = diff_from_center_y
+            pyxel.blt(
+                local_x,
+                local_y,
+                0,  # image bank
+                animation.sprite_x,  # sprite x in tileset
+                animation.sprite_y,  # sprite y in tileset
+                -body.width if body.flip_x else body.width,  # width (negative for left flip)
+                body.height,  # height
+                0  # colorkey
+            )
+
+class ScDebugPlayer(Screen):
+    def __init__(self, world, priority: int = 0) -> None:
+        super().__init__(world, priority)
+    
+    def draw(self):
+        for entity, (_, position) in self.world.get_components(Player, Position2D):
+            pyxel.text(50, 2, f"x: {position.x:.1f}, y: {position.y:.1f}", 7)

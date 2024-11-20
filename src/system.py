@@ -1,6 +1,7 @@
 from pigframe import System
 from component import *
 import pyxel
+import random
 
 def check_collision(pos: Position2D, body: RectRigidBody, tilemap_id: int, surface_height: int = None):
     # Convert pixel coordinates to tile coordinates
@@ -85,7 +86,7 @@ class SysTilemapCollision(System):
             collision_info.left = left
             collision_info.right = right
 
-class SysPlayerMovement(System):
+class SysCharacterMovement(System):
     def __init__(self, world, priority: int = 0, **kwargs) -> None:
         super().__init__(world, priority, **kwargs)
 
@@ -224,3 +225,52 @@ class SysUpdateStageState(System):
                 stage_state.time_remaining -= 1 / 60
                 if stage_state.time_remaining <= 0:
                     stage_state.game_over = True
+
+class SysEnemyWalk(System):
+    def __init__(self, world, priority: int = 0, **kwargs) -> None:
+        super().__init__(world, priority, **kwargs)
+
+    def process(self):
+        for entity, (_, _, body, velocity, collision_info) in self.world.get_components(Enemy, MoveMethodWalk, RectRigidBody, Velocity2D, CollisionInfo):
+            if collision_info.left:
+                velocity.x = 1.0
+                body.flip_x = False
+            elif collision_info.right:
+                velocity.x = -1.0
+                body.flip_x = True
+
+class SysEnemyMovement(System):
+    def __init__(self, world, priority: int = 0, **kwargs) -> None:
+        super().__init__(world, priority, **kwargs)
+
+    def process(self):
+        for entity, (_, position, velocity) in self.world.get_components(Enemy, Position2D, Velocity2D):
+            position.next_x = position.x + velocity.x
+            position.next_y = position.y + velocity.y
+
+class SysEnemyAnimation(System):
+    def __init__(self, world, priority: int = 0, **kwargs) -> None:
+        super().__init__(world, priority, **kwargs)
+        self.animation_speed = kwargs.get("animation_speed", 6)
+    
+    def process(self):
+        for entity, (_, body, animation) in self.world.get_components(Enemy, RectRigidBody, EnemyAnimation):
+            sprite_x = 32
+            sprite_y = 8*7
+            animation.timer += 1
+            if animation.timer > self.animation_speed:
+                animation.timer = 0
+                animation.frame = (animation.frame + 1) % 4
+            
+            if animation.frame == 1:
+                sprite_x = 48
+                sprite_y = 8*7
+            elif animation.frame == 2:
+                sprite_x = 64
+                sprite_y = 8*7
+            elif animation.frame == 3:
+                sprite_x = 48
+                sprite_y = 8*7
+            
+            animation.sprite_x = sprite_x
+            animation.sprite_y = sprite_y

@@ -176,6 +176,30 @@ class StageState:
     id: int = 0
     time_remaining: float = 60.0
 
+@dataclass
+class Enemy:
+    """敵を表すオブジェクト"""
+    species_id: int
+
+@dataclass
+class EnemyState:
+    """敵の状態を表すオブジェクト"""
+    is_dead: bool = False
+    
+@dataclass
+class EnemyAnimation:
+    """敵のアニメーション情報を持つオブジェクト"""
+    frame: int = 0
+    timer: int = 0
+    is_running: bool = False
+    sprite_x: int = 0
+    sprite_y: int = 8*7
+    
+@dataclass
+class MoveMethodWalk:
+    """歩く敵を表すオブジェクト"""
+    pass
+
 if __name__ == "__main__":
     v1 = Velocity2D(3, 4)
     v2 = Velocity2D(6, 8)
