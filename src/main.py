@@ -101,4 +101,7 @@ if __name__ == "__main__":
     ## Coin
     game.add_screen_to_scenes(ScCoin, "playable", 50)
     
+    ## Lives
+    game.add_screen_to_scenes(ScLives, "playable", 500)
+    
     game.run()

@@ -117,3 +117,14 @@ class ScCoin(Screen):
             local_x = pyxel.width//2 + diff_from_center_x
             local_y = diff_from_center_y
             pyxel.blt(local_x, local_y, 0, 16, 8+16*4, 16, 16, 0)
+            
+class ScLives(Screen):
+    def __init__(self, world, priority: int = 0) -> None:
+        super().__init__(world, priority)
+    
+    def draw(self):
+        stage_state_entity, stage_state = self.world.get_component(StageState)[0]
+        life_sprite_x = 8*3
+        life_sprite_y = 8*0
+        for i in range(stage_state.lives):
+            pyxel.blt(2 + i*10, 8, 0, life_sprite_x, life_sprite_y, 8, 8, 0)

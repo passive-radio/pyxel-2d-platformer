@@ -176,6 +176,7 @@ class StageState:
     id: int = 0
     time_remaining: float = 60.0
     coins: int = 0
+    lives: int = 3
 
 @dataclass
 class Enemy:

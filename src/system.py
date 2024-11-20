@@ -247,3 +247,5 @@ class SysPlayerDieFromFall(System):
             position.y = 8*10
             velocity.x = 0
             velocity.y = 0
+            if stage_state.lives > 0:
+                stage_state.lives -= 1
