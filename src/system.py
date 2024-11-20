@@ -353,3 +353,13 @@ class SysExitGame(System):
     def process(self):
         if self.world.actions.exit:
             pyxel.quit()
+
+class SysPlayBGM(System):
+    def __init__(self, world, priority: int = 0, **kwargs) -> None:
+        super().__init__(world, priority, **kwargs)
+
+    def process(self):
+        if pyxel.play_pos(0) is None:
+            for ch, sound in enumerate(self.world.music_data):
+                pyxel.sound(ch).set(*sound)
+                pyxel.play(ch, ch, loop=True)

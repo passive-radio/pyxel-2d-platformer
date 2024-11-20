@@ -3,12 +3,14 @@ from screen import *
 from system import *
 from spawn import *
 from input import Input
+import json
 
 SCREEN_SIZE = (8*34, 8*2*10) # (288, 160)
 image_filepath = "assets/2d-platformer.png"
 tilemap_filepath = "assets/map01.tmx"
 title = "2d-platformer"
 FPS = 60
+BGM = "assets/music.json"
 
 COINS_POSITIONS = [
     (8*1, 8*5),
@@ -28,6 +30,10 @@ class Game(World):
         for i in range(7):
             pyxel.tilemaps[i] = pyxel.Tilemap.from_tmx(tilemap_filepath, i)
         
+        with open(BGM, "r") as f:
+            self.music_data = json.loads(f.read())
+        
+        pyxel.load("assets/my_resource.pyxres", excl_images=True, excl_tilemaps=True)
     def draw(self):
         pyxel.cls(0)
         self.process_screens()
@@ -93,6 +99,9 @@ if __name__ == "__main__":
     
     ## Menu
     game.add_system_to_scenes(SysExitGame, "playable", 5000)
+    
+    ## Music
+    # game.add_system_to_scenes(SysPlayBGM, "playable", 5000)
 
     # Add screens
     game.add_screen_to_scenes(ScTileMaps, "playable", 0)
