@@ -175,6 +175,7 @@ class StageState:
     game_over: bool = False
     id: int = 0
     time_remaining: float = 60.0
+    coins: int = 0
 
 @dataclass
 class Enemy:
@@ -199,6 +200,21 @@ class EnemyAnimation:
 class MoveMethodWalk:
     """歩く敵を表すオブジェクト"""
     pass
+
+@dataclass
+class Collectible:
+    """コレクトアビリティを表すオブジェクト"""
+    pass
+
+@dataclass
+class Coin:
+    """コインを表すオブジェクト"""
+    pass
+
+@dataclass
+class CoinState:
+    """コインの状態を表すオブジェクト"""
+    is_collected: bool = False
 
 if __name__ == "__main__":
     v1 = Velocity2D(3, 4)

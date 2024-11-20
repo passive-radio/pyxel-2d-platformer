@@ -40,6 +40,7 @@ def spawn_stage_state(world: World, id: int, time_remaining: float):
 def spawn_enemy(world: World, species_id: int, x: int, y: int):
     entity = world.create_entity()
     world.add_component_to_entity(entity, Enemy, species_id=species_id)
+    world.add_component_to_entity(entity, Movable)
     world.add_component_to_entity(entity, RectRigidBody, width=16, height=16)
     world.add_component_to_entity(entity, Position2D, x=x, y=y)
     world.add_component_to_entity(entity, Velocity2D, x=0, y=0)
@@ -50,4 +51,10 @@ def spawn_enemy(world: World, species_id: int, x: int, y: int):
     world.add_component_to_entity(entity, CollisionInfo)
     return entity
 
-
+def spawn_coin(world: World, x: int, y: int):
+    entity = world.create_entity()
+    world.add_component_to_entity(entity, Collectible)
+    world.add_component_to_entity(entity, Coin)
+    world.add_component_to_entity(entity, Position2D, x=x, y=y)
+    world.add_component_to_entity(entity, CoinState, is_collected=False)
+    return entity

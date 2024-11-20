@@ -10,6 +10,44 @@ tilemap_filepath = "assets/map01.tmx"
 title = "2d-platformer"
 FPS = 60
 
+COINS_POSITIONS = [
+    (8*1, 8*5),
+    (8*36, 8*10),
+]
+
+def get_coin_positions_from_tilemap(tilemap_id: int = 7) -> list[tuple[int, int]]:
+    """Convert coin tilemap to list of coin positions.
+    
+    Args:
+        tilemap_id (int): Tilemap ID for coins (default: 7)
+    
+    Returns:
+        list[tuple[int, int]]: List of coin positions in pixel coordinates [(x, y), ...]
+    """
+    coin_positions = []
+    coins_pixels_width = 2
+    coins_pixels_height = 2
+    
+    # Get tilemap dimensions
+    tilemap = pyxel.tilemaps[tilemap_id]
+    # width, height = tilemap.width, tilemap.height
+    height = 20
+    width = 120
+    
+    # Scan each tile
+    for y in range(0, height, coins_pixels_height):
+        for x in range(0, width, coins_pixels_width):
+            col, colkey = tilemap.pget(x, y)
+            print(col, colkey)
+            if col != 0:  # Non-zero means coin placement
+                # Convert tile coordinates to pixel coordinates
+                pixel_x = x * 8
+                pixel_y = y * 8
+                coin_positions.append((pixel_x, pixel_y))
+    
+    print(coin_positions)
+    return coin_positions
+
 class Game(World):
     def __init__(self):
         super().__init__()
@@ -20,7 +58,7 @@ class Game(World):
     def init(self):
         pyxel.init(self.screen_size[0], self.screen_size[1], title=title, fps=self.fps)
         pyxel.images[0] = pyxel.Image.from_image(image_filepath, incl_colors=True)
-        for i in range(6):
+        for i in range(7):
             pyxel.tilemaps[i] = pyxel.Tilemap.from_tmx(tilemap_filepath, i)
         
     def draw(self):
@@ -54,6 +92,11 @@ if __name__ == "__main__":
     spawn_stage_state(game, 0, 60.0)
     spawn_enemy(game, 0, 8*12, 8*10)
     spawn_enemy(game, 0, 8*62, 8*10)
+    # Spawn coins using positions from tilemap
+    coin_positions = get_coin_positions_from_tilemap(6)
+    for pos in coin_positions:
+        spawn_coin(game, pos[0], pos[1])
+    
     # spawn_floor(game, 0, 8)
     # spawn_background(game, 3)
     
@@ -86,5 +129,8 @@ if __name__ == "__main__":
     
     ## Debug
     game.add_screen_to_scenes(ScDebugPlayer, "playable", 5000)
+    
+    ## Coin
+    game.add_screen_to_scenes(ScCoin, "playable", 50)
     
     game.run()

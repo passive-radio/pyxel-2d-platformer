@@ -1,49 +1,6 @@
 from pigframe import System
 from component import *
-import pyxel
-import random
-
-def check_collision(pos: Position2D, body: RectRigidBody, tilemap_id: int, surface_height: int = None):
-    # Convert pixel coordinates to tile coordinates
-    tile_x1 = pyxel.floor(pos.x) // 8
-    tile_y1 = pyxel.floor(pos.y) // 8
-    tile_x2 = (pyxel.ceil(pos.x) + body.width - 1) // 8
-    tile_y2 = (pyxel.ceil(pos.y) + body.height - 1) // 8
-    
-    collisions = {
-        "left": False,
-        "right": False,
-        "top": False,
-        "bottom": False
-    }
-    
-    for yi in range(tile_y1, tile_y2 + 1):
-        for xi in range(tile_x1, tile_x2 + 1):
-            col, colkey = pyxel.tilemaps[tilemap_id].pget(xi, yi)
-            if col == 0:  # Assuming 0 means empty/no collision
-                continue
-                
-            # Get tile boundaries in pixel coordinates
-            tile_left = xi * 8
-            tile_right = tile_left + 8
-            tile_top = yi * 8 + (8 - surface_height)
-            tile_bottom = tile_top + surface_height
-            
-            # プレイヤーの実際の判定範囲（surface heightを考慮）
-            player_bottom = pos.y + body.height
-            player_adjusted_bottom = player_bottom - surface_height  # surface_height pixels を無視
-            
-            # 左右の衝突判定は、surface heightによるオーバーラップを除外
-            if not (player_bottom > tile_top and player_adjusted_bottom < tile_top):
-                if tile_left <= pos.x + body.width <= tile_right:
-                    collisions["right"] = True
-                if tile_left <= pos.x <= tile_right:
-                    collisions["left"] = True
-            if tile_top <= pos.y + body.height <= tile_bottom:
-                collisions["bottom"] = True
-            if tile_top <= pos.y <= tile_bottom:
-                collisions["top"] = True
-    return collisions
+from utils import *
 
 class SysSimulateGravity(System):
     def __init__(self, world, priority: int = 0, **kwargs) -> None:
@@ -117,7 +74,7 @@ class SysUpdatePosition(System):
         super().__init__(world, priority, **kwargs)
 
     def process(self):
-        for entity, position in self.world.get_component(Position2D):
+        for entity, (movable, position) in self.world.get_components(Movable, Position2D):
             position.x = position.next_x
             position.y = position.next_y
 

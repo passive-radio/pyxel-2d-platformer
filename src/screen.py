@@ -89,3 +89,19 @@ class ScDebugPlayer(Screen):
     def draw(self):
         for entity, (_, position) in self.world.get_components(Player, Position2D):
             pyxel.text(50, 2, f"x: {position.x:.1f}, y: {position.y:.1f}", 7)
+
+class ScCoin(Screen):
+    def __init__(self, world, priority: int = 0) -> None:
+        super().__init__(world, priority)
+    
+    def draw(self):
+        player_ent, (_, player_pos) = self.world.get_components(Player, Position2D)[0]
+        for entity, (_, state, position) in self.world.get_components(Coin, CoinState, Position2D):
+            if state.is_collected:
+                continue
+            print("coin:",position.x, position.y)
+            diff_from_center_x = position.x - player_pos.x
+            diff_from_center_y = position.y
+            local_x = pyxel.width//2 + diff_from_center_x
+            local_y = diff_from_center_y
+            pyxel.blt(local_x, local_y, 0, 16, 8+16*4, 16, 16, 0)
