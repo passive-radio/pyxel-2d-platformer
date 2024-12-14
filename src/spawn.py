@@ -1,7 +1,16 @@
 from pigframe import World
 from component import *
 
-def spawn_player(world: World, x: int, y: int, width: int, height: int, jump_power: int = 2, move_speed: float = 0.15):
+
+def spawn_player(
+    world: World,
+    x: int,
+    y: int,
+    width: int,
+    height: int,
+    jump_power: int = 2,
+    move_speed: float = 0.15,
+):
     entity = world.create_entity()
     world.add_component_to_entity(entity, BaseCollidable)
     world.add_component_to_entity(entity, RectRigidBody, width=width, height=height)
@@ -13,16 +22,19 @@ def spawn_player(world: World, x: int, y: int, width: int, height: int, jump_pow
     world.add_component_to_entity(entity, Animation)
     return entity
 
+
 def spawn_collidable_tilemap(world: World, tilemap_id: int, surface_height: int):
     entity = world.create_entity()
     world.add_component_to_entity(entity, TileCollidable, surface_height=surface_height)
     world.add_component_to_entity(entity, TileMap, id=tilemap_id)
     return entity
 
+
 def spawn_background(world: World, tilemap_id: int):
     entity = world.create_entity()
     world.add_component_to_entity(entity, TileMap, id=tilemap_id)
     return entity
+
 
 def spawn_goal_marker_tilemap(world: World, tilemap_id: int):
     entity = world.create_entity()
@@ -31,14 +43,24 @@ def spawn_goal_marker_tilemap(world: World, tilemap_id: int):
     world.add_component_to_entity(entity, TileMap, id=tilemap_id)
     return entity
 
-def spawn_stage(world: World, id: int, time_remaining: float, init_enemy_positions: list[tuple[int, int]]):
+
+def spawn_stage(
+    world: World, id: int, time_remaining: float, init_enemy_positions: list[tuple[int, int]]
+):
     entity = world.create_entity()
-    world.add_component_to_entity(entity, StageState, id=id, time_remaining=time_remaining, init_enemy_positions=init_enemy_positions)
-    
+    world.add_component_to_entity(
+        entity,
+        StageState,
+        id=id,
+        time_remaining=time_remaining,
+        init_enemy_positions=init_enemy_positions,
+    )
+
     enemy_entities = []
     for pos in init_enemy_positions:
         enemy_entities.append(spawn_enemy(world, 0, pos[0], pos[1]))
     return entity, enemy_entities
+
 
 def spawn_enemy(world: World, species_id: int, x: int, y: int):
     entity = world.create_entity()
@@ -53,6 +75,7 @@ def spawn_enemy(world: World, species_id: int, x: int, y: int):
     world.add_component_to_entity(entity, BaseCollidable)
     world.add_component_to_entity(entity, CollisionInfo)
     return entity
+
 
 def spawn_coin(world: World, x: int, y: int):
     entity = world.create_entity()
