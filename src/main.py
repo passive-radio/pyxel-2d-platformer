@@ -78,7 +78,7 @@ if __name__ == "__main__":
     game.add_system_to_scenes(SysTilemapCollision, "playable", 1)
     game.add_system_to_scenes(SysSimulateGravity, "playable", 50, gravity=0.2, max_fall_speed=2.0)
     game.add_system_to_scenes(SysCharacterMovement, "playable", 20)
-    game.add_system_to_scenes(SysPlayerControl, "playable", 30, acceleration=0.5, friction=1)
+    game.add_system_to_scenes(SysPlayerControl, "playable", 30, acceleration=0.5, friction=0)
     game.add_system_to_scenes(SysPlayerAnimation, "playable", 60, animation_speed=6)
     game.add_system_to_scenes(SysUpdatePosition, "playable", 40)
     game.add_system_to_scenes(SysRestartStage, "playable", 100)
