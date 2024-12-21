@@ -148,19 +148,28 @@ class SysPlayerControl(System):
         super().__init__(world, priority, **kwargs)
         self.acceleration = kwargs.get("acceleration", 0.5)
         self.friction = kwargs.get("friction", 0.7)
+        self.count_jump = 0
 
     def process(self):
         for entity, (_, movable, body, velocity, collision_info) in self.world.get_components(
             Player, Movable, RectRigidBody, Velocity2D, CollisionInfo
         ):
             # Only allow jumping when on the ground
+            # 地面についているときだけジャンプできる
             ignore_value = 10000
             gamepad_input_x = pyxel.btnv(pyxel.GAMEPAD1_AXIS_LEFTX)
             gamepad_input_y = pyxel.btnv(pyxel.GAMEPAD1_AXIS_LEFTY)
             print("gamepad input:", gamepad_input_x, gamepad_input_y)
 
+            # もし地面についていたらジャンプカウントを0リセット
+            if collision_info.bottom:
+                self.count_jump = 0
+            # 1回目: jumpボタンが押された and 下方向に衝突あり
             if self.world.actions.jump and collision_info.bottom:
-                velocity.y = -movable.jump_power
+                velocity.y -= movable.jump_power
+                self.count_jump = 1
+            # 2回目: すでに1回ジャンプしている and 衝突なし
+            # if ...
 
             # Horizontal movement with acceleration
             if self.world.actions.left:
@@ -267,6 +276,10 @@ class SysPlayerGoal(System):
         super().__init__(world, priority, **kwargs)
 
     def process(self):
+        stage_state_entity, stage_state = self.world.get_component(StageState)[0]
+        # stage_state.game_over が True の場合は処理しない
+        if stage_state.game_over is True:
+            pass
         goal_marker_entity, goal_marker_tilemap = self.world.get_component(GoalMarkerTileMap)[0]
         player_entity, (_, position, body) = self.world.get_components(
             Player, Position2D, RectRigidBody
@@ -274,7 +287,6 @@ class SysPlayerGoal(System):
         collisions = check_collision_tilemap(
             position, body, goal_marker_tilemap.id, goal_marker_tilemap.pixel_size
         )
-        stage_state_entity, stage_state = self.world.get_component(StageState)[0]
         if collisions["bottom"] or collisions["left"]:
             stage_state.is_goal = True
 
