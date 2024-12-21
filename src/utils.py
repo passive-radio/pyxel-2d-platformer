@@ -5,6 +5,14 @@ from component import *
 def check_collision_tilemap(
     pos: Position2D, body: RectRigidBody, tilemap_id: int, surface_height: int = None
 ):
+    """タイルマップとの衝突をチェックする関数
+
+    Args:
+        pos (Position2D): オブジェクトの位置
+        body (RectRigidBody): オブジェクトのボディ
+        tilemap_id (int): タイルマップのID
+        surface_height (int, optional): 表面の高さ. Defaults to None.
+    """
     # Convert pixel coordinates to tile coordinates
     tile_x1 = pyxel.floor(pos.x) // 8
     tile_y1 = pyxel.floor(pos.y) // 8
@@ -43,13 +51,13 @@ def check_collision_tilemap(
 
 
 def get_coin_positions_from_tilemap(tilemap_id: int = 7) -> list[tuple[int, int]]:
-    """Convert coin tilemap to list of coin positions.
+    """コインのタイルマップをコインの位置リストに変換する関数
 
     Args:
-        tilemap_id (int): Tilemap ID for coins (default: 7)
+        tilemap_id (int): コインのタイルマップID (default: 7)
 
     Returns:
-        list[tuple[int, int]]: List of coin positions in pixel coordinates [(x, y), ...]
+        list[tuple[int, int]]: ピクセル座標のコイン位置リスト [(x, y), ...]
     """
     coin_positions = []
     coins_pixels_width = 2
@@ -77,6 +85,14 @@ def get_coin_positions_from_tilemap(tilemap_id: int = 7) -> list[tuple[int, int]
 def check_intersection_rect(
     pos1: Position2D, body1: RectRigidBody, pos2: Position2D, body2: RectRigidBody
 ):
+    """長方形同士の交差をチェックする関数
+
+    Args:
+        pos1 (Position2D): オブジェクト1の位置
+        body1 (RectRigidBody): オブジェクト1のボディ
+        pos2 (Position2D): オブジェクト2の位置
+        body2 (RectRigidBody): オブジェクト2のボディ
+    """
     return (
         pos1.x + body1.width > pos2.x
         and pos1.x < pos2.x + body2.width
@@ -88,6 +104,14 @@ def check_intersection_rect(
 def check_intersection_rect_circle(
     pos1: Position2D, body1: RectRigidBody, pos2: Position2D, body2: CircleRigidBody
 ):
+    """長方形と円の交差をチェックする関数
+
+    Args:
+        pos1 (Position2D): 長方形の位置
+        body1 (RectRigidBody): 長方形のボディ
+        pos2 (Position2D): 円の位置
+        body2 (CircleRigidBody): 円のボディ
+    """
     center_x = pos1.x + body1.width // 2
     center_y = pos1.y + body1.height // 2
     center_x2 = pos2.x + body2.radius
@@ -99,6 +123,14 @@ def check_intersection_rect_circle(
 def check_collision_rect_rect(
     pos1: Position2D, body1: RectRigidBody, pos2: Position2D, body2: RectRigidBody
 ):
+    """長方形同士の衝突をチェックする関数
+
+    Args:
+        pos1 (Position2D): オブジェクト1の位置
+        body1 (RectRigidBody): オブジェクト1のボディ
+        pos2 (Position2D): オブジェクト2の位置
+        body2 (RectRigidBody): オブジェクト2のボディ
+    """
     collisions = {"left": False, "right": False, "top": False, "bottom": False}
 
     if not check_intersection_rect(pos1, body1, pos2, body2):
@@ -118,6 +150,14 @@ def check_collision_rect_rect(
 def check_intersection_angle(
     pos1: Position2D, body1: RectRigidBody, pos2: Position2D, body2: RectRigidBody
 ):
+    """2つの長方形の交差角度をチェックする関数
+
+    Args:
+        pos1 (Position2D): オブジェクト1の位置
+        body1 (RectRigidBody): オブジェクト1のボディ
+        pos2 (Position2D): オブジェクト2の位置
+        body2 (RectRigidBody): オブジェクト2のボディ
+    """
     center_x1 = pos1.x + body1.width // 2
     center_y1 = pos1.y + body1.height // 2
     center_x2 = pos2.x + body2.width // 2

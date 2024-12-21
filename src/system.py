@@ -5,6 +5,11 @@ from stage import reset_stage
 
 
 class SysSimulateGravity(System):
+    """ゲームの当たり判定があるオブジェクトに重力による自由落下をシミュレーションするシステム
+    gravity: 重力の強さ
+    max_fall_speed: 最大落下速度
+    """
+
     def __init__(self, world, priority: int = 0, **kwargs) -> None:
         super().__init__(world, priority, **kwargs)
         self.gravity = kwargs.get("gravity", 0.2)
@@ -18,6 +23,8 @@ class SysSimulateGravity(System):
 
 
 class SysTilemapCollision(System):
+    """タイルマップとの衝突を処理するシステム"""
+
     def __init__(self, world, priority: int = 0, **kwargs) -> None:
         super().__init__(world, priority, **kwargs)
 
@@ -54,6 +61,8 @@ class SysTilemapCollision(System):
 
 
 class SysCharacterCollision(System):
+    """キャラクター同士の衝突を処理するシステム"""
+
     def __init__(self, world, priority: int = 0, **kwargs) -> None:
         super().__init__(world, priority, **kwargs)
 
@@ -87,6 +96,8 @@ class SysCharacterCollision(System):
 
 
 class SysCharacterMovement(System):
+    """キャラクターの移動を処理するシステム"""
+
     def __init__(self, world, priority: int = 0, **kwargs) -> None:
         super().__init__(world, priority, **kwargs)
 
@@ -116,6 +127,8 @@ class SysCharacterMovement(System):
 
 
 class SysUpdatePosition(System):
+    """オブジェクトの位置を更新するシステム"""
+
     def __init__(self, world, priority: int = 0, **kwargs) -> None:
         super().__init__(world, priority, **kwargs)
 
@@ -126,6 +139,11 @@ class SysUpdatePosition(System):
 
 
 class SysPlayerControl(System):
+    """プレイヤーの操作を処理するシステム
+    acceleration: 加速度
+    friction: 摩擦
+    """
+
     def __init__(self, world, priority: int = 0, **kwargs) -> None:
         super().__init__(world, priority, **kwargs)
         self.acceleration = kwargs.get("acceleration", 0.5)
@@ -170,6 +188,10 @@ class SysPlayerControl(System):
 
 
 class SysPlayerAnimation(System):
+    """プレイヤーのアニメーションを処理するシステム
+    animation_speed: アニメーションの速度
+    """
+
     def __init__(self, world, priority: int = 0, **kwargs) -> None:
         super().__init__(world, priority, **kwargs)
         self.animation_speed = kwargs.get("animation_speed", 6)
@@ -215,6 +237,8 @@ class SysPlayerAnimation(System):
 
 
 class SysRestartStage(System):
+    """ステージをリスタートするシステム"""
+
     def __init__(self, world, priority: int = 0, **kwargs) -> None:
         super().__init__(world, priority, **kwargs)
 
@@ -237,6 +261,8 @@ class SysRestartStage(System):
 
 
 class SysPlayerGoal(System):
+    """プレイヤーがゴールに到達したかを判定するシステム"""
+
     def __init__(self, world, priority: int = 0, **kwargs) -> None:
         super().__init__(world, priority, **kwargs)
 
@@ -254,6 +280,8 @@ class SysPlayerGoal(System):
 
 
 class SysUpdateStageState(System):
+    """ステージの状態を更新するシステム"""
+
     def __init__(self, world, priority: int = 0, **kwargs) -> None:
         super().__init__(world, priority, **kwargs)
 
@@ -266,6 +294,8 @@ class SysUpdateStageState(System):
 
 
 class SysEnemyWalk(System):
+    """敵の歩行を処理するシステム"""
+
     def __init__(self, world, priority: int = 0, **kwargs) -> None:
         super().__init__(world, priority, **kwargs)
 
@@ -282,6 +312,8 @@ class SysEnemyWalk(System):
 
 
 class SysEnemyMovement(System):
+    """敵の移動を処理するシステム"""
+
     def __init__(self, world, priority: int = 0, **kwargs) -> None:
         super().__init__(world, priority, **kwargs)
 
@@ -294,6 +326,10 @@ class SysEnemyMovement(System):
 
 
 class SysEnemyAnimation(System):
+    """敵のアニメーションを処理するシステム
+    animation_speed: アニメーションの速度
+    """
+
     def __init__(self, world, priority: int = 0, **kwargs) -> None:
         super().__init__(world, priority, **kwargs)
         self.animation_speed = kwargs.get("animation_speed", 6)
@@ -324,6 +360,8 @@ class SysEnemyAnimation(System):
 
 
 class SysPlayerDieFromFall(System):
+    """プレイヤーが落下によって死亡する処理を行うシステム"""
+
     def __init__(self, world, priority: int = 0, **kwargs) -> None:
         super().__init__(world, priority, **kwargs)
 
@@ -346,6 +384,8 @@ class SysPlayerDieFromFall(System):
 
 
 class SysPlayerDieNoHP(System):
+    """プレイヤーがHPがなくなったときに死亡する処理を行うシステム"""
+
     def __init__(self, world, priority: int = 0, **kwargs) -> None:
         super().__init__(world, priority, **kwargs)
 
@@ -359,6 +399,8 @@ class SysPlayerDieNoHP(System):
 
 
 class SysCollectCoin(System):
+    """コインの収集を処理するシステム"""
+
     def __init__(self, world, priority: int = 0, **kwargs) -> None:
         super().__init__(world, priority, **kwargs)
 
@@ -378,6 +420,8 @@ class SysCollectCoin(System):
 
 
 class SysPlayerEnemyCollision(System):
+    """プレイヤーと敵の衝突を処理するシステム"""
+
     def __init__(self, world, priority: int = 0, **kwargs) -> None:
         super().__init__(world, priority, **kwargs)
 
@@ -411,6 +455,8 @@ class SysPlayerEnemyCollision(System):
 
 
 class SysExitGame(System):
+    """ゲームの終了を処理するシステム"""
+
     def __init__(self, world, priority: int = 0, **kwargs) -> None:
         super().__init__(world, priority, **kwargs)
 
@@ -420,6 +466,8 @@ class SysExitGame(System):
 
 
 class SysPlayBGM(System):
+    """BGMの再生を処理するシステム"""
+
     def __init__(self, world, priority: int = 0, **kwargs) -> None:
         super().__init__(world, priority, **kwargs)
 

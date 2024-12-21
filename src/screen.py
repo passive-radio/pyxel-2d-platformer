@@ -4,6 +4,8 @@ from component import *
 
 
 class ScTileMaps(Screen):
+    """タイルマップを描画するスクリーン"""
+
     def __init__(self, world, priority: int = 0, **kwargs) -> None:
         super().__init__(world, priority, **kwargs)
 
@@ -17,6 +19,8 @@ class ScTileMaps(Screen):
 
 
 class ScPlayer(Screen):
+    """プレイヤーを描画するスクリーン"""
+
     def __init__(self, world, priority: int = 0) -> None:
         super().__init__(world, priority)
 
@@ -38,6 +42,8 @@ class ScPlayer(Screen):
 
 
 class ScStageClock(Screen):
+    """ステージの残り時間を描画するスクリーン"""
+
     def __init__(self, world, priority: int = 0) -> None:
         super().__init__(world, priority)
 
@@ -47,6 +53,8 @@ class ScStageClock(Screen):
 
 
 class ScGameOver(Screen):
+    """ゲームオーバーを表示するスクリーン"""
+
     def __init__(self, world, priority: int = 0) -> None:
         super().__init__(world, priority)
 
@@ -59,6 +67,8 @@ class ScGameOver(Screen):
 
 
 class ScGoal(Screen):
+    """ゴールを表示するスクリーン"""
+
     def __init__(self, world, priority: int = 0) -> None:
         super().__init__(world, priority)
 
@@ -71,6 +81,8 @@ class ScGoal(Screen):
 
 
 class ScEnemy(Screen):
+    """敵を描画するスクリーン"""
+
     def __init__(self, world, priority: int = 0) -> None:
         super().__init__(world, priority)
 
@@ -97,6 +109,8 @@ class ScEnemy(Screen):
 
 
 class ScDebugColorPalette(Screen):
+    """デバッグ用のカラーパレットを表示するスクリーン"""
+
     def __init__(self, world, priority: int = 0) -> None:
         super().__init__(world, priority)
 
@@ -110,6 +124,8 @@ class ScDebugColorPalette(Screen):
 
 
 class ScDebugPlayer(Screen):
+    """プレイヤーのデバッグ情報を表示するスクリーン"""
+
     def __init__(self, world, priority: int = 0) -> None:
         super().__init__(world, priority)
 
@@ -119,6 +135,8 @@ class ScDebugPlayer(Screen):
 
 
 class ScCoin(Screen):
+    """コインを描画するスクリーン"""
+
     def __init__(self, world, priority: int = 0) -> None:
         super().__init__(world, priority)
 
@@ -137,6 +155,8 @@ class ScCoin(Screen):
 
 
 class ScLives(Screen):
+    """プレイヤーの残りライフを表示するスクリーン"""
+
     def __init__(self, world, priority: int = 0) -> None:
         super().__init__(world, priority)
 
@@ -149,6 +169,8 @@ class ScLives(Screen):
 
 
 class ScCoinCount(Screen):
+    """コインの数を表示するスクリーン"""
+
     def __init__(self, world, priority: int = 0) -> None:
         super().__init__(world, priority)
 
