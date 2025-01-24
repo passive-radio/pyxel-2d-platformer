@@ -168,8 +168,13 @@ class SysPlayerControl(System):
             if self.world.actions.jump and collision_info.bottom:
                 velocity.y -= movable.jump_power
                 self.count_jump = 1
+                self.world.actions.jump = False
+
             # 2回目: すでに1回ジャンプしている and 衝突なし
-            # if ...
+            elif self.world.actions.jump and self.count_jump < 2:
+                velocity.y -= movable.jump_power
+                self.count_jump = 2
+                self.world.actions.jump = False
 
             # Horizontal movement with acceleration
             if self.world.actions.left:
